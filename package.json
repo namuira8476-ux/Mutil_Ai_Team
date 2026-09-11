@@ -1,0 +1,89 @@
+{
+  "name": "agent-workroom",
+  "version": "0.1.15",
+  "description": "A local pencil-drawn workspace for Codex, Claude, Gemini and shared skills",
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.cjs",
+  "author": "Agent Studio",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint electron src tests",
+    "test": "vitest run",
+    "test:e2e": "npm run build && playwright test",
+    "dist:win": "npm run build && electron-builder --win nsis --x64",
+    "start": "electron .",
+    "format": "prettier --write src electron tests scripts *.ts",
+    "test:live": "node scripts/live-smoke.mjs",
+    "test:team": "node scripts/live-team.mjs"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/xterm": "6.0.0",
+    "chokidar": "5.0.0",
+    "lucide-react": "1.43.0",
+    "node-pty": "1.1.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "sql.js": "1.14.2",
+    "zod": "4.5.4"
+  },
+  "build": {
+    "appId": "local.agentworkroom.desktop",
+    "productName": "Agent Studio",
+    "executableName": "Agent Workroom",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/node-pty/**"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "artifactName": "AgentStudio-${version}-${os}-${arch}-setup.${ext}",
+    "npmRebuild": false
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.5.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@types/sql.js": "1.4.11",
+    "@vitejs/plugin-react": "6.1.1",
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
+    "eslint": "10.10.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vite": "8.2.2",
+    "vitest": "5.0.0"
+  },
+  "engines": {
+    "node": ">=24.0.0 <25"
+  }
+}
