@@ -9,3 +9,5 @@ Agent Studio — 로컬에서 Codex, Claude, Gemini(agy)를 함께 사용하는 
 설치: README의 한 줄 PowerShell 명령 또는 아래 setup.exe를 사용하세요. SHA256SUMS.txt로 다운로드 파일을 확인할 수 있습니다.
 
 0.1.16: CLI 설치 확인과 로그인을 구분하고, 본인 계정 사용 안내 및 배포 개인정보 검사를 추가했습니다.
+
+0.1.17: 기업용 Gemini CLI 사용 시 agy가 불필요함을 명시하고, 개인용 agy 설치 버튼과 기업용 설치 가이드를 구분했습니다.

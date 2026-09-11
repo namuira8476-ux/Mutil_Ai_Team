@@ -2014,7 +2014,9 @@ function SettingsView({
               <p>
                 {p.backend === "agy"
                   ? "Antigravity CLI · agy로 연결되었습니다."
-                  : "개인 Google 계정은 Antigravity CLI(agy)를 연결하세요."}
+                  : "Gemini CLI · 기업용 계정은 agy 설치 없이 사용할 수 있습니다."}
+                {" "}Gemini Code Assist Standard/Enterprise 사용자는 기존 gemini
+                실행 경로를 지정하세요. 개인용 계정은 agy를 사용합니다.
               </p>
             )}
             <div className="path-input">
@@ -2097,7 +2099,7 @@ function SettingsView({
                     }
                   }}
                 >
-                  공식 설치 실행
+                  {p.id === "gemini" ? "개인용 agy 설치" : "공식 설치 실행"}
                 </button>
               )}
             </div>
@@ -2121,7 +2123,9 @@ function SettingsView({
                     ? "https://learn.chatgpt.com/docs/codex/cli"
                     : p.id === "claude"
                       ? "https://code.claude.com/docs/en/setup"
-                      : "https://antigravity.google/docs/cli/install/",
+                      : p.backend === "agy"
+                        ? "https://antigravity.google/docs/cli/install/"
+                        : "https://geminicli.com/docs/get-started/installation/",
                 )
               }
             >

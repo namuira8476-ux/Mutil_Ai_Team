@@ -2,9 +2,9 @@
 
 ## 지원 대상
 
-0.1.15은 Windows 11 x64에서 개발·검증하는 로컬 앱입니다. x64 설치 파일 하나가 macOS·Linux·Windows ARM64에서 모두 동작하는 것은 아닙니다. 다른 OS는 별도 빌드와 CLI·PTY 검증이 필요합니다.
+0.1.17은 Windows 11 x64에서 개발·검증하는 로컬 앱입니다. x64 설치 파일 하나가 macOS·Linux·Windows ARM64에서 모두 동작하는 것은 아닙니다. 다른 OS는 별도 빌드와 CLI·PTY 검증이 필요합니다.
 
-설치 파일: `release/AgentStudio-0.1.15-win-x64-setup.exe`. 설치 및 검증 결과는 GitHub Release 안내, SHA-256은 `release/SHA256SUMS.txt`에 기록합니다. 이 개발 미리보기는 코드 서명 인증서가 없는 **서명되지 않은 설치 파일**입니다.
+설치 파일: `release/AgentStudio-0.1.17-win-x64-setup.exe`. 설치 및 검증 결과는 GitHub Release 안내, SHA-256은 `release/SHA256SUMS.txt`에 기록합니다. 이 개발 미리보기는 코드 서명 인증서가 없는 **서명되지 않은 설치 파일**입니다.
 
 0.1.7부터 CLI 연결 후 중앙 대화·오른쪽 에이전트·자동화 단계에서 모델을 선택할 수 있습니다. [모델 선택 사용법](MODEL_SELECTION.ko.md). 기존 설치 위치에 업데이트하면 프로젝트·스킬·실행 기록을 유지합니다.
 
@@ -18,7 +18,7 @@
 
 ## CLI 연결
 
-필요한 CLI만 설치하면 됩니다. 앱은 PATH, 알려진 Codex 설치 위치, Windows의 `%USERPROFILE%/.local/bin/claude.exe`, `%LOCALAPPDATA%/agy/bin/agy.exe`와 `%APPDATA%/npm`을 탐색합니다. Gemini는 자동 탐색 시 Antigravity CLI(`agy`)를 우선합니다. 찾지 못하면 **설정 → 실행 경로**에서 직접 지정합니다. 이전 `gemini.cmd` 경로가 저장돼 있으면 `agy.exe` 경로로 바꾸거나 경로를 비우고 **경로 저장하고 연결 확인**을 누르세요.
+필요한 CLI만 설치하면 됩니다. 앱은 PATH, 알려진 Codex 설치 위치, Windows의 `%USERPROFILE%/.local/bin/claude.exe`, `%LOCALAPPDATA%/agy/bin/agy.exe`와 `%APPDATA%/npm`을 탐색합니다. Gemini는 자동 탐색 시 Antigravity CLI(`agy`)를 우선합니다. 찾지 못하면 **설정 → 실행 경로**에서 직접 지정합니다. 기업용 사용자는 기존 `gemini.cmd` 경로를 유지하세요. 둘 다 설치되어 있으면 `where.exe gemini`로 경로를 확인한 뒤 Gemini 실행 경로에 직접 지정하고 **경로 저장하고 연결 확인**을 누르세요. 개인용 계정을 agy로 전환할 때만 경로를 변경하세요.
 
 | CLI | 공식 안내 | 앱에서 사용하는 방식 |
 | --- | --- | --- |
@@ -28,9 +28,9 @@
 
 각 공식 CLI를 일반 터미널에서 한 번 실행해 로그인과 초기 설정을 완료하세요. Antigravity의 Windows 공식 설치 안내는 PowerShell의 `irm https://antigravity.google/cli/install.ps1 | iex`를 제공합니다. 공식 사이트에서 설치 스크립트와 안내를 확인한 뒤 실행하고, `agy --version`, `agy` 순서로 버전과 로그인을 확인하세요. 새 PC의 로그인은 그 PC에서 진행합니다.
 
-Google은 개인용 Gemini CLI 계정을 Antigravity로 전환했습니다. 기업용·유료 API 키 등 기존 Gemini CLI를 사용하는 환경은 명시적으로 지정한 `gemini` 경로와 기존 출력 형식도 지원합니다. [공식 전환 안내](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/). 캐릭터·공용 스킬·프로젝트 자동화의 Gemini 연결은 그대로 사용하며 실제 실행기가 `agy`로 바뀝니다.
+Google은 개인용 Gemini CLI 계정을 Antigravity로 전환했습니다. 기업용·유료 API 키 등 기존 Gemini CLI를 사용하는 환경은 명시적으로 지정한 `gemini` 경로와 기존 출력 형식도 지원합니다. [공식 전환 안내](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/). Gemini Code Assist Standard/Enterprise 라이선스 사용자는 **Gemini CLI를 그대로 사용하며 agy 설치가 필요하지 않습니다.** 캐릭터·공용 스킬·프로젝트 자동화는 지정한 Gemini CLI 또는 agy를 사용합니다.
 
-이 앱은 로그인 비밀번호·토큰을 복사하거나 내보내지 않습니다. 연결됨은 실행파일과 버전 확인에 성공했다는 뜻이며, 유효한 로그인·충분한 계정 한도를 보장하지 않습니다.
+이 앱은 로그인 비밀번호·토큰을 복사하거나 내보내지 않습니다. 설치 확인은 실행파일과 버전 확인에 성공했다는 뜻이며, 유효한 로그인·충분한 계정 한도를 보장하지 않습니다.
 
 ## 첫 프로젝트
 
@@ -75,3 +75,24 @@ Codex 계정 한도는 공식 App Server 조회를 사용합니다. Claude·Gemi
 
 
 
+
+## 기업용 Gemini CLI 설치 (agy 불필요)
+
+Gemini Code Assist Standard/Enterprise 사용자는 다음 순서로 연결하세요.
+회사 Google 계정이 있다는 것만으로 라이선스가 부여되지는 않으며 조직의 사용 권한이 필요합니다.
+
+1. 이미 `gemini --version`이 동작하면 재설치하지 않습니다.
+2. 설치가 필요하면 조직에서 승인한 Node.js/npm 환경에서 아래 명령을 실행합니다.
+3. `gemini`를 실행해 본인 기업 계정으로 로그인하고 조직의 Google Cloud 프로젝트·인증 정책을 따릅니다.
+4. `where.exe gemini` 결과 중 실행 가능한 `gemini.cmd` 또는 실행파일을 앱의 Gemini 경로로 저장합니다.
+5. 짧은 요청으로 응답을 확인합니다. **개인용 agy 설치** 버튼은 누를 필요가 없습니다.
+
+```powershell
+npm install -g @google/gemini-cli
+gemini --version
+gemini
+where.exe gemini
+```
+
+앱 자체 설치에는 Node.js가 필요하지 않지만, 위 npm 방식의 Gemini CLI 설치에는 필요합니다.
+[Gemini CLI 공식 설치 안내](https://geminicli.com/docs/get-started/installation/) · [공식 인증 안내](https://geminicli.com/docs/get-started/authentication/)
