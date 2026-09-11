@@ -17,6 +17,9 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
+      - name: Verify installer checksum handling
+        shell: pwsh
+        run: ./scripts/test-installer.ps1
       - run: npm run build
       - run: npx electron-builder --win nsis --x64 --publish never
       - name: Publish verified installer
