@@ -1,5 +1,19 @@
 import type { ModelOption, ProviderId } from "../src/shared";
 
+// A CLI without a model-list API is still a usable worker. Do not pass a
+// coordinator's guessed (possibly agy-only) model into enterprise Gemini CLI.
+export function delegatedModel(
+  catalog: ModelOption[],
+  requested?: string,
+  pinned?: string,
+): string | undefined {
+  if (pinned !== undefined) return pinned;
+  if (!catalog.length) return "";
+  if (requested && !catalog.some((m) => m.id === requested))
+    throw Error("자동 선택 모델은 확인된 모델 목록에 있어야 합니다.");
+  return requested;
+}
+
 export function efficientModel(
   provider: ProviderId,
   models: ModelOption[],

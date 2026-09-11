@@ -112,12 +112,13 @@ if (args.includes("app-server")) {
         emit({ type: "thread.started", thread_id: "fixture-team" });
         const children = [];
         const parallel = prompt.includes("[parallel-fixture]");
+        const enterprise = prompt.includes("[enterprise-fixture]");
         const pending = [];
         for (const model of parallel
           ? [undefined, undefined, undefined]
           : [undefined, "explicit-child-model"]) {
           const child = await rpc("run_skill", {
-            provider: parallel ? "gemini" : "claude",
+            provider: parallel || enterprise ? "gemini" : "claude",
             ...(parallel ? { resources: { reads: [], writes: [] } } : {}),
             reason: "사용자가 지정한 독립 검수 테스트",
             skillId: "code-implement",

@@ -7,7 +7,7 @@ import http from "node:http";
 import * as pty from "node-pty";
 import chokidar, { type FSWatcher } from "chokidar";
 import { Store } from "./store";
-import { efficientModel, TEAM_POLICY } from "./team-routing";
+import { delegatedModel, efficientModel, TEAM_POLICY } from "./team-routing";
 import { taskResources, queueWait } from "./task-scheduling";
 import { browserTools, type BrowserBridge } from "./browser-tools";
 import { setupScript } from "./cli-setup";
@@ -187,8 +187,12 @@ export class Runtime extends EventEmitter {
       skills: this.store
         .all<Skill>("skills")
         .sort((a, b) => a.createdAt - b.createdAt),
-      runs: [...this.runs.values()].map(r => r.status === "queued"
-        ? { ...r, ...queueWait(r, [...this.runs.values()]) } : r)
+      runs: [...this.runs.values()]
+        .map((r) =>
+          r.status === "queued"
+            ? { ...r, ...queueWait(r, [...this.runs.values()]) }
+            : r,
+        )
         .sort((a, b) => b.startedAt - a.startedAt),
       automations: this.store.all<Automation>("automations"),
       providers: this.providers,
@@ -718,17 +722,13 @@ export class Runtime extends EventEmitter {
     const fixed = parent?.teamCatalog
       ? parent.teamModelPins?.[args.provider]
       : parent?.teamModels?.[args.provider];
-    const selected =
-      fixed ??
-      args.model ??
-      (parent?.teamCatalog ? undefined : this.settings.models?.[args.provider]);
-    if (
-      parent?.teamCatalog &&
-      fixed === undefined &&
-      args.model &&
-      !parent.teamCatalog[args.provider]?.some((m) => m.id === args.model)
-    )
-      throw Error("자동 선택 모델은 확인된 모델 목록에 있어야 합니다.");
+    const selected = parent?.teamCatalog
+      ? delegatedModel(
+          parent.teamCatalog[args.provider] || [],
+          args.model,
+          fixed,
+        )
+      : (fixed ?? args.model ?? this.settings.models?.[args.provider]);
     const automatic =
       selected === undefined && !!(args.team || parent?.teamCatalog);
     const decision = efficientModel(
@@ -738,7 +738,11 @@ export class Runtime extends EventEmitter {
     );
     const model = normalizeModel(automatic ? decision.model : selected);
     const routingReason =
-      args.routingReason ||
+      (parent?.teamCatalog &&
+      fixed === undefined &&
+      !parent.teamCatalog[args.provider]?.length
+        ? "모델 목록 미제공: 단독 실행과 동일한 CLI 기본 모델 사용"
+        : args.routingReason) ||
       (automatic
         ? decision.reason
         : parent?.teamCatalog && fixed === undefined
@@ -803,6 +807,9 @@ export class Runtime extends EventEmitter {
     if (args.team && this.browser) prompt += "\n" + this.browser.context(p.id);
     if (teamModels)
       prompt += `\n${TEAM_POLICY}\n사용자 고정 모델: ${JSON.stringify(teamModelPins)}\n확인된 모델 목록: ${JSON.stringify(teamCatalog)}\n`;
+    if (args.team)
+      prompt +=
+        "\n모델 목록이 비어 있어도 CLI는 사용 가능합니다. 기업용 Gemini CLI는 모델 목록을 제공하지 않습니다. 해당 작업자의 model 인수는 생략하고 CLI 기본값 또는 사용자 고정값을 사용하세요. agy 전용 모델 ID를 Gemini CLI에 지정하거나 agy 설치를 요구하지 마세요.\n";
     if (resources)
       prompt +=
         "\n파일 작업 범위: " +
@@ -1537,7 +1544,7 @@ export class Runtime extends EventEmitter {
                       type: "string",
                       maxLength: 200,
                       description:
-                        "사용자 고정값 우선. 그 외에는 확인된 목록에서 난이도에 맞게 선택한다. 생략하면 앱이 경량 후보를 우선 선택한다.",
+                        "사용자 고정값 우선. 목록이 있으면 확인된 모델만 선택한다. 기업용 Gemini처럼 목록이 비어 있으면 model을 생략한다. 앱이 CLI 기본값을 사용한다.",
                     },
                   },
                   required: ["provider", "skillId", "task"],

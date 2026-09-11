@@ -40,7 +40,7 @@ irm https://raw.githubusercontent.com/namuira8476-ux/Mutil_Ai_Team/main/install.
 
 ## 지원 범위
 
-현재 **0.1.17 개발 미리보기**, Windows x64를 지원합니다. macOS·Linux·ARM 설치파일은 제공하지 않습니다. 설치파일은 코드서명되지 않았습니다. 내장 브라우저 직접 제어는 현재 Codex만 지원합니다. 토큰·한도는 CLI가 제공하는 범위에서만 표시합니다.
+현재 **0.1.18 개발 미리보기**, Windows x64를 지원합니다. macOS·Linux·ARM 설치파일은 제공하지 않습니다. 설치파일은 코드서명되지 않았습니다. 내장 브라우저 직접 제어는 현재 Codex만 지원합니다. 토큰·한도는 CLI가 제공하는 범위에서만 표시합니다.
 
 로컬 설정과 기록은 `%APPDATA%\agent-workroom`에 저장합니다. 모델 요청은 해당 CLI 서비스로 전송되며 완전 오프라인 앱은 아닙니다. 직접 조작 CLI를 열어두면 같은 프로젝트의 자동 작업이 대기할 수 있습니다.
 
@@ -57,7 +57,7 @@ npm run dev
 
 검사: `npm run lint`, `npm test`, `npm run build`. 설치파일: `npm run dist:win`.
 
-릴리스 담당자는 package.json 버전과 일치하는 `v0.1.17` 형태의 태그를 푸시합니다. GitHub Actions가 Windows에서 설치·검사·빌드 후 설치파일과 체크섬을 Releases에 게시합니다. GitHub 자동 생성 소스 ZIP도 같은 릴리스에서 받을 수 있습니다.
+릴리스 담당자는 package.json 버전과 일치하는 `v0.1.18` 형태의 태그를 푸시합니다. GitHub Actions가 Windows에서 설치·검사·빌드 후 설치파일과 체크섬을 Releases에 게시합니다. GitHub 자동 생성 소스 ZIP도 같은 릴리스에서 받을 수 있습니다.
 
 [자세한 사용법](docs/USAGE.ko.md) · [개발 안내](docs/BUILD.ko.md) · [다른 PC로 이전](docs/MIGRATION.ko.md)
 

@@ -1,5 +1,21 @@
 import { it, expect } from "vitest";
-import { efficientModel } from "../electron/team-routing";
+import { delegatedModel, efficientModel } from "../electron/team-routing";
+it("uses CLI defaults for unlisted enterprise workers instead of guessed agy models", () => {
+  expect(delegatedModel([], "gemini-3.7-flash-low")).toBe("");
+  expect(delegatedModel([], undefined)).toBe("");
+});
+it("preserves explicit user models and explicit CLI defaults", () => {
+  expect(delegatedModel([], "guessed", "enterprise-model")).toBe(
+    "enterprise-model",
+  );
+  expect(delegatedModel([], "guessed", "")).toBe("");
+});
+it("still validates coordinator choices against a supplied catalog", () => {
+  const catalog = [{ id: "gemini-flash", name: "Flash" }];
+  expect(() => delegatedModel(catalog, "unknown")).toThrow("확인된 모델 목록");
+  expect(delegatedModel(catalog, "gemini-flash")).toBe("gemini-flash");
+  expect(delegatedModel(catalog)).toBeUndefined();
+});
 const models = [
   "claude-flash",
   "gemini-pro",

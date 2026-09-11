@@ -96,3 +96,4 @@ where.exe gemini
 
 앱 자체 설치에는 Node.js가 필요하지 않지만, 위 npm 방식의 Gemini CLI 설치에는 필요합니다.
 [Gemini CLI 공식 설치 안내](https://geminicli.com/docs/get-started/installation/) · [공식 인증 안내](https://geminicli.com/docs/get-started/authentication/)
+기업용 팀 실행: 0.1.18부터 모델 목록이 없어도 Codex 팀 작업에서 Gemini CLI에 위임합니다. Gemini 모델 설정을 CLI 기본값으로 두거나 단독 실행에 성공한 모델 ID로 고정하세요. 실제 기업 계정의 모델 권한·인증은 해당 CLI가 확인합니다.

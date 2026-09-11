@@ -22,6 +22,8 @@ jobs:
         shell: pwsh
         run: ./scripts/test-installer.ps1
       - run: npm run build
+      - name: Verify enterprise Gemini team delegation with fixture CLIs
+        run: node scripts/verify-enterprise-team.mjs
       - run: npx electron-builder --win nsis --x64 --publish never
       - run: npm run check:privacy -- --package
       - name: Publish verified installer
