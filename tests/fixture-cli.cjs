@@ -116,7 +116,10 @@ if (args.includes("app-server")) {
         const pending = [];
         for (const model of parallel
           ? [undefined, undefined, undefined]
-          : [undefined, "explicit-child-model"]) {
+          : [
+              undefined,
+              enterprise ? "gemini-3.1-pro-preview" : "explicit-child-model",
+            ]) {
           const child = await rpc("run_skill", {
             provider: parallel || enterprise ? "gemini" : "claude",
             ...(parallel ? { resources: { reads: [], writes: [] } } : {}),

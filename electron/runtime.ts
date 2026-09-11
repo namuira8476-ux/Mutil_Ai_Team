@@ -8,6 +8,11 @@ import * as pty from "node-pty";
 import chokidar, { type FSWatcher } from "chokidar";
 import { Store } from "./store";
 import { delegatedModel, efficientModel, TEAM_POLICY } from "./team-routing";
+import {
+  enterpriseModel,
+  ENTERPRISE_MODELS,
+  isEnterpriseGemini,
+} from "../src/enterprise-models";
 import { taskResources, queueWait } from "./task-scheduling";
 import { browserTools, type BrowserBridge } from "./browser-tools";
 import { setupScript } from "./cli-setup";
@@ -220,6 +225,13 @@ export class Runtime extends EventEmitter {
       }
     }
     if (Object.keys(repaired).length) this.saveSettings({ paths: repaired });
+    const gemini = this.providers.find((p) => p.id === "gemini");
+    if (gemini?.available && isEnterpriseGemini(gemini))
+      this.saveSettings({
+        models: {
+          gemini: enterpriseModel(gemini, this.settings.models?.gemini),
+        },
+      });
     for (const provider of this.providers) {
       const old = previous.find(
         (p) =>
@@ -291,6 +303,9 @@ export class Runtime extends EventEmitter {
       ...this.settings.models,
       ...data.models,
     });
+    const gemini = this.providers.find((p) => p.id === "gemini");
+    if (gemini?.available && isEnterpriseGemini(gemini))
+      models.gemini = enterpriseModel(gemini, models.gemini);
     this.settings = {
       ...this.settings,
       ...data,
@@ -493,7 +508,9 @@ export class Runtime extends EventEmitter {
   startTerminal(projectId: string, id: ProviderId, selectedModel?: string) {
     const project = this.project(projectId),
       provider = this.provider(id);
-    const model = normalizeModel(selectedModel ?? this.settings.models?.[id]);
+    const model = normalizeModel(
+      enterpriseModel(provider, selectedModel ?? this.settings.models?.[id]),
+    );
     const existing = [...this.runs.values()].find(
       (r) =>
         r.projectId === projectId &&
@@ -710,7 +727,10 @@ export class Runtime extends EventEmitter {
       ? Object.fromEntries(
           this.providers
             .filter((p) => p.available)
-            .map((p) => [p.id, p.models || []]),
+            .map((p) => [
+              p.id,
+              isEnterpriseGemini(p) ? ENTERPRISE_MODELS : p.models || [],
+            ]),
         )
       : undefined;
     const teamModelPins = args.team
@@ -726,7 +746,7 @@ export class Runtime extends EventEmitter {
       ? delegatedModel(
           parent.teamCatalog[args.provider] || [],
           args.model,
-          fixed,
+          fixed === undefined ? undefined : enterpriseModel(provider, fixed),
         )
       : (fixed ?? args.model ?? this.settings.models?.[args.provider]);
     const automatic =
@@ -736,7 +756,9 @@ export class Runtime extends EventEmitter {
       parent?.teamCatalog?.[args.provider] || provider.models || [],
       args.prompt,
     );
-    const model = normalizeModel(automatic ? decision.model : selected);
+    const model = normalizeModel(
+      enterpriseModel(provider, automatic ? decision.model : selected),
+    );
     const routingReason =
       (parent?.teamCatalog &&
       fixed === undefined &&
@@ -809,7 +831,7 @@ export class Runtime extends EventEmitter {
       prompt += `\n${TEAM_POLICY}\n사용자 고정 모델: ${JSON.stringify(teamModelPins)}\n확인된 모델 목록: ${JSON.stringify(teamCatalog)}\n`;
     if (args.team)
       prompt +=
-        "\n모델 목록이 비어 있어도 CLI는 사용 가능합니다. 기업용 Gemini CLI는 모델 목록을 제공하지 않습니다. 해당 작업자의 model 인수는 생략하고 CLI 기본값 또는 사용자 고정값을 사용하세요. agy 전용 모델 ID를 Gemini CLI에 지정하거나 agy 설치를 요구하지 마세요.\n";
+        "\n기업용 Gemini CLI는 앱 허용 목록의 gemini-3.5-flash 또는 gemini-3.1-pro-preview만 사용하세요. agy 전용 모델을 지정하거나 agy 설치를 요구하지 마세요.\n";
     if (resources)
       prompt +=
         "\n파일 작업 범위: " +
@@ -899,6 +921,7 @@ export class Runtime extends EventEmitter {
     });
     const token = randomBytes(24).toString("hex");
     if (args.team) this.tokens.set(token, run.id);
+    run.model = enterpriseModel(provider, run.model);
     try {
       const cmd = command(
         provider.path,

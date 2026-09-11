@@ -57,11 +57,17 @@ const rule = (projectId: string): Automation => ({
 });
 describe("managed runtime", () => {
   it("records the time of CLI output separately from queue time", async () => {
-    const p=project();
-    const run=await runtime.startTask({projectId:p.id,provider:"gemini",prompt:"[slow]"});
-    const result=await runtime.waitRun(run.id);
+    const p = project();
+    const run = await runtime.startTask({
+      projectId: p.id,
+      provider: "gemini",
+      prompt: "[slow]",
+    });
+    const result = await runtime.waitRun(run.id);
     expect(result.executionStartedAt).toBeGreaterThanOrEqual(result.startedAt);
-    expect(result.lastOutputAt).toBeGreaterThanOrEqual(result.executionStartedAt!);
+    expect(result.lastOutputAt).toBeGreaterThanOrEqual(
+      result.executionStartedAt!,
+    );
     expect(result.status).toBe("completed");
   });
   it("runs three independent workers concurrently and keeps the fourth queued", async () => {
@@ -154,6 +160,8 @@ describe("managed runtime", () => {
 
   it("automatically selects catalog models per child task and rejects invented IDs", async () => {
     const p = project();
+    runtime.providers.find((p) => p.id === "gemini")!.backend = "agy";
+    delete runtime.settings.models?.gemini;
     runtime.providers.forEach((provider) => {
       provider.modelsCheckedAt = Date.now();
       provider.models =
@@ -215,7 +223,10 @@ describe("managed runtime", () => {
         });
         await runtime.waitRun(run.id);
         expect(run.status).toBe("completed");
-        const requested = model ?? `saved-${provider}`;
+        const requested =
+          provider === "gemini"
+            ? "gemini-3.5-flash"
+            : (model ?? `saved-${provider}`);
         expect(run.model).toBe(requested);
         expect(JSON.parse(run.answer!)).toMatchObject({
           provider,
@@ -317,12 +328,12 @@ describe("managed runtime", () => {
     expect(runs.map((r) => r.model)).toEqual([
       "pinned-model",
       "default-claude",
-      "",
+      "gemini-3.5-flash",
     ]);
     expect(runs.map((r) => JSON.parse(r.answer!).model)).toEqual([
       "pinned-model",
       "default-claude",
-      "fixture-cli-default",
+      "gemini-3.5-flash",
     ]);
   }, 15000);
   it("persists model defaults, imports portable choices and reads a CLI model catalog", async () => {
@@ -338,6 +349,7 @@ describe("managed runtime", () => {
     expect(runtime.state().settings.models).toEqual({
       codex: "saved-model",
       claude: "",
+      gemini: "gemini-3.5-flash",
     });
     expect(
       runtime.state().automations.find((a) => a.id !== automation.id)!.steps[0]

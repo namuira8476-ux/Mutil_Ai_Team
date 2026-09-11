@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import type { ModelOption, Provider } from "../src/shared";
 import { command, invokeCapture } from "./providers";
 import { modelSchema } from "./model-selection";
+import { ENTERPRISE_MODELS } from "../src/enterprise-models";
 
 const clean = (items: ModelOption[]) => [
   ...new Map(
@@ -158,5 +159,8 @@ export async function loadModels(
       );
     return { models, modelsSource: "agy models" };
   }
-  return { models: [], modelsSource: "기존 Gemini CLI · 모델 ID 직접 입력" };
+  return {
+    models: ENTERPRISE_MODELS,
+    modelsSource: "기업용 허용 모델 2종 · 계정 권한은 실행 시 확인",
+  };
 }

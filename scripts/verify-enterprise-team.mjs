@@ -56,7 +56,7 @@ try {
     throw Error("Team fixture timed out");
   }
   const direct = await run({ provider: "gemini", prompt: "[model-check]" });
-  assert.equal(direct.parent.model, "");
+  assert.equal(direct.parent.model, "gemini-3.5-flash");
   const defaults = await run({
     provider: "codex",
     team: true,
@@ -66,10 +66,10 @@ try {
   for (const child of defaults.children) {
     assert.equal(child.provider, "gemini");
     assert.equal(child.status, "completed");
-    assert.equal(child.model, "");
-    assert.match(child.output, /fixture-cli-default/);
+    assert.equal(child.model, "gemini-3.5-flash");
+    assert.match(child.output, /gemini-3.5-flash/);
   }
-  await call("settings.save", { models: { gemini: "enterprise-pinned" } });
+  await call("settings.save", { models: { gemini: "gemini-3.1-pro-preview" } });
   const pinned = await run({
     provider: "codex",
     team: true,
@@ -78,11 +78,11 @@ try {
   assert.equal(pinned.children.length, 2);
   for (const child of pinned.children) {
     assert.equal(child.status, "completed");
-    assert.equal(child.model, "enterprise-pinned");
-    assert.match(child.output, /enterprise-pinned/);
+    assert.equal(child.model, "gemini-3.1-pro-preview");
+    assert.match(child.output, /gemini-3.1-pro-preview/);
   }
   console.log(
-    "PASS: Gemini standalone and Codex MCP team delegation with empty model catalog, guessed model, and user-pinned model. Fixture CLIs only; enterprise account not tested.",
+    "PASS: Gemini standalone and Codex MCP team delegation with Flash 3.5 default and Pro 3.1 user-pinned model. Fixture CLIs only; enterprise account not tested.",
   );
 } finally {
   await app.close();

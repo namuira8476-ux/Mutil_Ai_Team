@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import type { Provider } from "./shared";
+import {
+  ENTERPRISE_MODELS,
+  enterpriseModel,
+  isEnterpriseGemini,
+} from "./enterprise-models";
 
 export default function ModelPicker({
   provider,
@@ -16,7 +21,8 @@ export default function ModelPicker({
   inheritLabel?: string;
   disabled?: boolean;
 }) {
-  const options = provider?.models || [];
+  const restricted = isEnterpriseGemini(provider);
+  const options = restricted ? ENTERPRISE_MODELS : provider?.models || [];
   const [custom, setCustom] = useState(false);
   const [draft, setDraft] = useState(value || "");
   const [error, setError] = useState("");
@@ -46,7 +52,13 @@ export default function ModelPicker({
         <span>{label}</span>
         <select
           aria-label={label}
-          value={selected}
+          value={
+            restricted
+              ? value === undefined && inheritLabel
+                ? "__inherit__"
+                : enterpriseModel(provider!, value)
+              : selected
+          }
           disabled={disabled}
           onChange={(e) => {
             const next = e.target.value;
@@ -67,16 +79,16 @@ export default function ModelPicker({
           }}
         >
           {inheritLabel && <option value="__inherit__">{inheritLabel}</option>}
-          <option value="__cli__">CLI 기본값</option>
+          {!restricted && <option value="__cli__">CLI 기본값</option>}
           {options.map((option) => (
             <option key={option.id} value={option.id}>
               {option.name}
             </option>
           ))}
-          <option value="__custom__">모델 ID 직접 입력</option>
+          {!restricted && <option value="__custom__">모델 ID 직접 입력</option>}
         </select>
       </label>
-      {(custom || unknown) && (
+      {!restricted && (custom || unknown) && (
         <div className="model-custom">
           <input
             aria-label={`${label} ID`}
@@ -102,6 +114,12 @@ export default function ModelPicker({
             적용
           </button>
         </div>
+      )}
+      {restricted && (
+        <small>
+          기업용은 두 모델만 사용합니다. 미설정·이전 모델은 3.5 Flash로
+          적용됩니다.
+        </small>
       )}
       {error && (
         <small role="alert" className="model-error">
