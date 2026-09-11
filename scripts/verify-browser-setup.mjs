@@ -1,6 +1,7 @@
 import {_electron as electron,expect} from '@playwright/test';
 import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import http from 'node:http';
 import {Store} from '../electron/store.ts';
+fs.mkdirSync("outputs/verification",{recursive:true});
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'workroom-browser-'));const project=path.join(root,'project');fs.mkdirSync(project);
 const paths={};for(const [id,entry] of Object.entries({codex:'@openai/codex/bin/codex.js',claude:'@anthropic-ai/claude-code/cli.js',gemini:'@google/gemini-cli/dist/index.js'})){const file=path.join(root,'bin/node_modules',entry);fs.mkdirSync(path.dirname(file),{recursive:true});fs.copyFileSync('tests/fixture-cli.cjs',file);paths[id]=path.join(root,'bin',id+'.cmd');fs.writeFileSync(paths[id],'rem TEST FIXTURE');}
 const store=await new Store(path.join(root,'data')).init(path.resolve('node_modules/sql.js/dist/sql-wasm.wasm'));store.put('settings',{id:'app',paths,background:false,reduceMotion:false});store.db.close();
@@ -32,5 +33,6 @@ try{
  await expect.poll(async()=>(await invoke('state')).runs.find(r=>r.id===shell.id)?.output||'').toContain('SETUP_INPUT_OK');await invoke('run.cancel',{runId:shell.id});
  console.log(JSON.stringify({passed:true,version:await app.evaluate(({app})=>app.getVersion()),checks:['Codex MCP browser navigate/read/fill/click','Korean browser input','isolated web preferences','reject javascript URL','pause agent control','chat keyboard','embedded native view at 1366x700','interactive setup PowerShell without reinstall']}));
 }finally{await app.close();server.close();}
+
 
 

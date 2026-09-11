@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
+fs.mkdirSync("outputs/verification",{recursive:true});
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'workroom-browser-models-'));
 const project=path.join(root,'project');fs.mkdirSync(project);
 const server=http.createServer((_req,res)=>{res.setHeader('Content-Type','text/html; charset=utf-8');res.end('<title>Browser model test</title><label>이름<input aria-label="이름"></label><button onclick="document.querySelector(\'#result\').textContent=document.querySelector(\'input\').value">확인</button><p id="result">대기</p>');});
@@ -28,3 +29,4 @@ try {
   fs.writeFileSync('outputs/verification/browser-live-models.json',JSON.stringify({checkedAt:new Date().toISOString(),results},null,2));
  }
 } finally {if(app)await app.close();server.close();}
+

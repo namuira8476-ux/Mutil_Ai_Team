@@ -1,6 +1,7 @@
 import {_electron as electron,expect} from '@playwright/test';
 import fs from 'node:fs';import path from 'node:path';import os from 'node:os';
 import {Store} from '../electron/store.ts';
+fs.mkdirSync("outputs/verification",{recursive:true});
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'workroom-browser-'));const project=path.join(root,'project');fs.mkdirSync(project);
 const paths={};for(const [id,entry] of Object.entries({codex:'@openai/codex/bin/codex.js',claude:'@anthropic-ai/claude-code/cli.js',gemini:'@google/gemini-cli/dist/index.js'})){const file=path.join(root,'bin/node_modules',entry);fs.mkdirSync(path.dirname(file),{recursive:true});fs.copyFileSync('tests/fixture-cli.cjs',file);paths[id]=path.join(root,'bin',id+'.cmd');fs.writeFileSync(paths[id],'rem TEST FIXTURE');}
 const store=await new Store(path.join(root,'data')).init(path.resolve('node_modules/sql.js/dist/sql-wasm.wasm'));store.put('settings',{id:'app',paths,background:false,reduceMotion:false});store.db.close();
@@ -24,3 +25,4 @@ try {
  expect(finished.executionStartedAt).toBeGreaterThan(finished.startedAt);
  const report={passed:true,checks:['terminal blocker reason visible','blocked CLI accessible','closing terminal resumes queue','CLI output timestamp','real execution time distinct from queued time','1366x700 no document overflow','English/Korean input']};fs.writeFileSync('outputs/verification/progress-check.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 } finally {await app.close();}
+

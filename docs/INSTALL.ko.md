@@ -4,7 +4,7 @@
 
 0.1.15은 Windows 11 x64에서 개발·검증하는 로컬 앱입니다. x64 설치 파일 하나가 macOS·Linux·Windows ARM64에서 모두 동작하는 것은 아닙니다. 다른 OS는 별도 빌드와 CLI·PTY 검증이 필요합니다.
 
-설치 파일: `release/AgentStudio-0.1.15-win-x64-setup.exe`. 설치 및 검증 결과는 [구현 상태](IMPLEMENTATION_STATUS.md), SHA-256은 `release/SHA256SUMS.txt`에 기록합니다. 이 개발 미리보기는 코드 서명 인증서가 없는 **서명되지 않은 설치 파일**입니다.
+설치 파일: `release/AgentStudio-0.1.15-win-x64-setup.exe`. 설치 및 검증 결과는 GitHub Release 안내, SHA-256은 `release/SHA256SUMS.txt`에 기록합니다. 이 개발 미리보기는 코드 서명 인증서가 없는 **서명되지 않은 설치 파일**입니다.
 
 0.1.7부터 CLI 연결 후 중앙 대화·오른쪽 에이전트·자동화 단계에서 모델을 선택할 수 있습니다. [모델 선택 사용법](MODEL_SELECTION.ko.md). 기존 설치 위치에 업데이트하면 프로젝트·스킬·실행 기록을 유지합니다.
 
@@ -69,6 +69,7 @@ Codex 계정 한도는 공식 App Server 조회를 사용합니다. Claude·Gemi
 | PTY 종료 시 AttachConsole 경고 | 현재 node-pty/Windows 조합에서 종료 시 관측됨. 실행 상태와 남은 프로세스를 확인 |
 
 설정 화면의 **데이터 폴더 열기**로 로컬 기록 위치를 확인할 수 있습니다. 기본 위치는 `%APPDATA%/agent-workroom`이며 배포 설정에 따라 이름은 앱이 보여주는 실제 위치를 우선합니다. 프로젝트 원본은 선택한 폴더에 그대로 있습니다.
+
 
 
 
