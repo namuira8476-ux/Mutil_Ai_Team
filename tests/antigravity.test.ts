@@ -42,7 +42,7 @@ describe("Antigravity CLI compatibility", () => {
     ).toBeUndefined();
   });
   it("executes the native agy binary directly without resolving a Gemini npm wrapper", () => {
-    const exe = "C:\\Users\\person\\AppData\\Local\\agy\\bin\\agy.exe";
+    const exe = "C:\\test-fixture\\agy\\bin\\agy.exe";
     expect(isAntigravityPath(exe)).toBe(true);
     expect(isAntigravityPath("/home/user/.local/bin/agy")).toBe(true);
     expect(isAntigravityPath("C:\\agy\\gemini.cmd")).toBe(false);

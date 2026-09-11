@@ -1981,7 +1981,7 @@ function SettingsView({
       <PageTitle
         icon={<Settings />}
         title="연결과 로컬 설정"
-        subtitle="CLI는 각자의 공식 로그인과 설치 환경을 사용해요."
+        subtitle="각자 본인 계정으로 로그인하세요. 개발자의 계정이나 구독은 제공되지 않습니다."
       />
       <div className="provider-settings">
         {state.providers.map((p) => (
@@ -1990,10 +1990,15 @@ function SettingsView({
               <ProviderMark id={p.id} />
               <h3>{p.name}</h3>
               <span className={`status ${p.available ? "ready" : "offline"}`}>
-                {p.available ? "연결됨" : "설정 필요"}
+                {p.available ? "설치 확인" : "설정 필요"}
               </span>
             </header>
             <p>{p.version || p.error}</p>
+            <p className="tiny muted">
+              설치 확인은 로그인 완료를 뜻하지 않습니다. 이 Windows 사용자에게
+              저장된 CLI 인증을 사용합니다. 처음 사용하면 아래 터미널에서 CLI를
+              실행하고 본인 계정으로 로그인하세요. 이미 로그인했다면 재사용합니다.
+            </p>
             <ModelPicker
               provider={p}
               label={`${p.name} 저장할 기본 모델`}

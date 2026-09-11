@@ -18,3 +18,12 @@ docs/IMPLEMENTATION_STATUS.md
 *.pem
 *.key
 scripts/export-source.mjs
+
+.codex/
+.claude/
+.gemini/
+.agy/
+auth.json
+credentials.json
+*.db
+*.sqlite3
